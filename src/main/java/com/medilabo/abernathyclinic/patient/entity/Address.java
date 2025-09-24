@@ -17,11 +17,11 @@ public class Address {
 	@Id
 	private int id;
 	
-	@Column(name="street_number", length=5)
+	@Column(name="street_number", length=5, nullable=false)
 	private String streetNumber;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="street_id")
+	@JoinColumn(name="street_id", nullable=false)
 	private Street street;
 
 	public Address() {}
