@@ -34,3 +34,6 @@ build/
 
 ### environment configuration files ###
 .env
+
+# debug tests
+**/debug/*
