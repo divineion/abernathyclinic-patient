@@ -1,7 +1,9 @@
 package com.medilabo.abernathyclinic.patient.config;
 
+import com.medilabo.abernathyclinic.patient.entity.Address;
 import com.medilabo.abernathyclinic.patient.entity.City;
 import com.medilabo.abernathyclinic.patient.entity.Street;
+import com.medilabo.abernathyclinic.patient.repository.AddressRepository;
 import com.medilabo.abernathyclinic.patient.repository.CityRepository;
 import com.medilabo.abernathyclinic.patient.repository.StreetRepository;
 
@@ -19,10 +21,12 @@ public class DataInitializer {
 
 	private final CityRepository cityRepository;
 	private final StreetRepository streetRepository;
+    private final AddressRepository addressRepository;
 	
-	DataInitializer(CityRepository cityRepository, StreetRepository streetRepository) {
+	DataInitializer(CityRepository cityRepository, StreetRepository streetRepository, AddressRepository addressRepository) {
 		this.cityRepository = cityRepository;
 		this.streetRepository = streetRepository;
+		this.addressRepository = addressRepository;
 	}
 
 	@Bean
@@ -30,6 +34,7 @@ public class DataInitializer {
 		return _ -> {
 			initCities();
 			initStreets();
+			initAddresses();
 		};
 	}
 
@@ -77,6 +82,36 @@ public class DataInitializer {
 		streets.forEach(street -> {
 			if (streetRepository.findByNameAndCity(street.getName(), street.getCity()).isEmpty()) {
 				streetRepository.save(street);
+			}
+		});
+	}
+	
+	private void initAddresses() {
+		List<Address> addresses = new ArrayList<>();
+	
+		City city1 = cityRepository.findByNameAndZip("Cambridge", "10139").get();
+		Street street1 = streetRepository.findByNameAndCity("Brookside St", city1).get();
+		Address address1 = new Address("1", street1);
+		addresses.add(address1);
+	
+		City city2 = cityRepository.findByNameAndZip("North Platte", "20139").get();
+		Street street2 = streetRepository.findByNameAndCity("High St", city2).get();
+		Address address2 = new Address("2", street2);
+		addresses.add(address2);
+	
+		City city3 = cityRepository.findByNameAndZip("San Diego", "30139").get();
+		Street street3 = streetRepository.findByNameAndCity("Club Road", city3).get();
+		Address address3 = new Address("3", street3);
+		addresses.add(address3);
+	
+		City city4 = cityRepository.findByNameAndZip("Bethia", "40139").get();
+		Street street4 = streetRepository.findByNameAndCity("Valley Dr", city4).get();
+		Address address4 = new Address("4", street4);
+		addresses.add(address4);
+	
+		addresses.forEach(address -> {
+			if (addressRepository.findByNumberAndStreet(address.getStreetNumber(), address.getStreet()).isEmpty()) {
+				addressRepository.save(address);
 			}
 		});
 	}
