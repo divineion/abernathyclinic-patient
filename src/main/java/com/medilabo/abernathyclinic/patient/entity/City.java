@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 public class City {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	
 	@Column(length=50, nullable=false)
 	private String name;
@@ -27,7 +27,7 @@ public class City {
 		this.zip = zip;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 

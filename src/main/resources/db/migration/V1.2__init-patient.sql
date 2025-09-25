@@ -2,7 +2,7 @@
 -- Table patient
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS patient (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   uuid UUID NOT NULL UNIQUE,
   last_name VARCHAR(80) NOT NULL,
   first_name VARCHAR(80) NOT NULL,

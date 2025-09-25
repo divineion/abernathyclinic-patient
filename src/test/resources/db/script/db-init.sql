@@ -6,7 +6,7 @@ SET SCHEMA test_abernathyclinic_patient;
 -- Table city
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS city (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(50) NOT NULL,
   zip VARCHAR(5) NOT NULL,
   CONSTRAINT uq_city_name_zip UNIQUE (name, zip)
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS city (
 -- Table street
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS street (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(50) NOT NULL,
   city_id INT NOT NULL,
   CONSTRAINT fk_street_city FOREIGN KEY (city_id)
@@ -29,7 +29,7 @@ ALTER TABLE street ADD CONSTRAINT uq_street_name_city UNIQUE (name, city_id);
 -- Table address
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS address (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
   street_number VARCHAR(5),
   street_id INT NOT NULL,
   CONSTRAINT uq_address_street_number UNIQUE (street_number, street_id)
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS address (
 -- Table patient
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS patient (
-  id INT PRIMARY KEY AUTO_INCREMENT,
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
   uuid UUID NOT NULL UNIQUE,
   last_name VARCHAR(80) NOT NULL,
   first_name VARCHAR(80) NOT NULL,

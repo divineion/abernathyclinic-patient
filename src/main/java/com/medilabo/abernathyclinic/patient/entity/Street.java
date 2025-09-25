@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 public class Street {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
 	@Column(name="name", length=150, nullable=false)
 	private String name;
@@ -31,12 +31,8 @@ public class Street {
 		this.city = city;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public String getName() {
