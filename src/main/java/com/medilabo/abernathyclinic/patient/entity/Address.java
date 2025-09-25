@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 public class Address {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Id
-	private int id;
+	private Long id;
 	
 	@Column(name="street_number", length=5, nullable=false)
 	private String streetNumber;
@@ -31,7 +31,7 @@ public class Address {
 		this.street = street;
 	}
 
-	public int getId() {
+	public Long getId() {
 		return id;
 	}
 

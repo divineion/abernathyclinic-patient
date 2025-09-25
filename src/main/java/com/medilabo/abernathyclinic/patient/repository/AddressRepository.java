@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.medilabo.abernathyclinic.patient.entity.Address;
 import com.medilabo.abernathyclinic.patient.entity.Street;
 
-public interface AddressRepository extends JpaRepository<Address, Integer> {
+public interface AddressRepository extends JpaRepository<Address, Long> {
 	@Query("select a from Address a where a.streetNumber = :streetNumber and a.street = :street")
 	public Optional<Address> findByNumberAndStreet(String streetNumber, Street street);
 }

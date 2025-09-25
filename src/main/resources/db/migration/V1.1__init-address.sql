@@ -2,7 +2,7 @@
 -- Table city
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS city (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   zip VARCHAR(5) NOT NULL,
   UNIQUE (name, zip)
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS city (
 -- Table street
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS street (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   city_id INT NOT NULL,
   UNIQUE (name, city_id),
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS street (
 -- Table address
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS address (
-  id SERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   street_number VARCHAR(5) NOT NULL,
   street_id INT NOT NULL,
   UNIQUE (street_number, street_id),

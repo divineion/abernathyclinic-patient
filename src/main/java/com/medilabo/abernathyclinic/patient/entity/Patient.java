@@ -19,7 +19,7 @@ import jakarta.persistence.Table;
 public class Patient {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	
 	@Column(columnDefinition = "UUID", nullable=false, unique=true, updatable=false)
 	private UUID uuid;
@@ -55,7 +55,7 @@ public class Patient {
 		this.phone = phone;
 	}
 	
-	public int getId() {
+	public Long getId() {
 		return this.id;
 	}
 
