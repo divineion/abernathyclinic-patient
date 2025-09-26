@@ -25,15 +25,16 @@ public class PatientControllerIT {
 		mockMvc.perform(get("/api/patient/{id}", id))
 		.andExpectAll(
 			status().isOk(),
-			jsonPath("$.lastName").exists(),
-			jsonPath("$.firstName").exists(),
-			jsonPath("$.birthDate").exists(),
-			jsonPath("$.gender").exists(),
-			jsonPath("$.address.streetNumber").exists(),
-			jsonPath("$.address.street").exists(),
-			jsonPath("$.address.city").exists(),
+			jsonPath("$.lastName").isString(),
+			jsonPath("$.firstName").isString(),
+			jsonPath("$.birthDate").isString(),
+			jsonPath("$.gender").isString(),
+			jsonPath("$.address.streetNumber").isString(),
+			jsonPath("$.address.street").isString(),
+			jsonPath("$.address.city").isString(),
 			jsonPath("$.address.zip").isString(),
-			jsonPath("$.uuid").exists(),
+			jsonPath("$.phone").isString(),
+			jsonPath("$.uuid").isString(),
 			jsonPath("$.id").doesNotExist()
 		);
 	}
