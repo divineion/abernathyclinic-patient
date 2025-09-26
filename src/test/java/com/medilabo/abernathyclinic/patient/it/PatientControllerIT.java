@@ -45,4 +45,18 @@ public class PatientControllerIT {
 		mockMvc.perform(get("/api/patient/{id}", id))
 		.andExpect(status().isNotFound());
 	}
+	
+	@Test
+	public void testGetAllPatient_shouldReturnDtoList() throws Exception {
+		mockMvc.perform(get("/api/patients"))
+		.andExpectAll(
+			status().isOk(),
+			jsonPath("$").isArray(),
+			jsonPath("$.[0].uuid").isString(),
+			jsonPath("$.[0].firstName").isString(),
+			jsonPath("$.[0].lastName").isString(),
+			jsonPath("$.[0].birthDate").isString(),
+			jsonPath("$.[0].gender").isString()
+		);
+	}
 }
