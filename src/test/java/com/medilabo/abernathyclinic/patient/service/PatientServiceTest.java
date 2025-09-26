@@ -43,7 +43,7 @@ public class PatientServiceTest {
 		when(mapper.patientToPatientDto(mockPatient)).thenReturn(mockDto);
 		
 		// act
-		PatientDto result = service.findById(1L);
+		PatientDto result = service.findPatientById(1L);
 		
 		// assert
 		assertEquals("Testlastname", result.lastName());
@@ -55,6 +55,6 @@ public class PatientServiceTest {
 		when(patientRepository.findById(2L)).thenReturn(Optional.empty());
 		
 		// act and assert
-		assertThrows(PatientNotFoundException.class, () -> service.findById(2L));	
+		assertThrows(PatientNotFoundException.class, () -> service.findPatientById(2L));	
 	}
 }

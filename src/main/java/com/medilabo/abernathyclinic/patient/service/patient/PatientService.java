@@ -20,7 +20,7 @@ public class PatientService {
 		this.patientMapper = patientMapper;
 	}
 	
-	public PatientDto findById(Long id) throws PatientNotFoundException {
+	public PatientDto findPatientById(Long id) throws PatientNotFoundException {
 		Patient patient = patientRepository.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException("No patient found with id " + id));
 		
