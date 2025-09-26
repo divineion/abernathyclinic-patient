@@ -21,7 +21,7 @@ public class PatientController {
     }
     
 	@GetMapping("/api/patient/{id}")
-	public ResponseEntity<PatientDto> findById(@PathVariable Long id) throws PatientNotFoundException {	
+	public ResponseEntity<PatientDto> getPatientById(@PathVariable Long id) throws PatientNotFoundException {	
 		PatientDto patient = patientService.findById(id);
 		return ResponseEntity.ok(patient);
 	}
