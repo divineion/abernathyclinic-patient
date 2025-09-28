@@ -43,14 +43,14 @@ public class PatientService {
 	}
 
 	public PatientDto createPatient(CreatePatientDto dto) {
-		Address patientAddress = addAddressIfNotExists(dto.address());
-		
 		Patient newPatient = patientMapper.createPatientDtoToPatient(dto);
-		newPatient.setAddress(patientAddress);
-		
-		
+
+		if (dto.address() != null) {
+			Address patientAddress = addAddressIfNotExists(dto.address());
+			newPatient.setAddress(patientAddress);
+		}
+
 		return patientMapper.patientToPatientDto(patientRepository.save(newPatient));
-		
 	}
 	
 	public Address addAddressIfNotExists(AddressDto address) {
