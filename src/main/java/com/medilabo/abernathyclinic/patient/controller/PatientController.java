@@ -15,6 +15,8 @@ import com.medilabo.abernathyclinic.patient.dto.PatientDto;
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
 import com.medilabo.abernathyclinic.patient.service.patient.PatientService;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class PatientController {
     private final PatientService patientService;
@@ -36,7 +38,7 @@ public class PatientController {
 	}
 	
 	@PostMapping("/api/patient")
-	public ResponseEntity<PatientDto> createPatient(@RequestBody CreatePatientDto dto) {
+	public ResponseEntity<PatientDto> createPatient(@Valid @RequestBody CreatePatientDto dto) {
 		PatientDto newPatient = patientService.createPatient(dto);
 		return ResponseEntity.status(201).body(newPatient);
 	}
