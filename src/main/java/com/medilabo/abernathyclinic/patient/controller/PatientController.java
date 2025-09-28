@@ -5,12 +5,17 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.medilabo.abernathyclinic.patient.dto.CreatePatientDto;
 import com.medilabo.abernathyclinic.patient.dto.MinimalPatientDto;
 import com.medilabo.abernathyclinic.patient.dto.PatientDto;
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
 import com.medilabo.abernathyclinic.patient.service.patient.PatientService;
+
+import jakarta.validation.Valid;
 
 @RestController
 public class PatientController {
@@ -30,5 +35,11 @@ public class PatientController {
 	public ResponseEntity<List<MinimalPatientDto>> getAllPatients() {
 		List<MinimalPatientDto> list = patientService.findAllPatient();
 		return ResponseEntity.ok(list);
+	}
+	
+	@PostMapping("/api/patient")
+	public ResponseEntity<PatientDto> createPatient(@Valid @RequestBody CreatePatientDto dto) {
+		PatientDto newPatient = patientService.createPatient(dto);
+		return ResponseEntity.status(201).body(newPatient);
 	}
 }
