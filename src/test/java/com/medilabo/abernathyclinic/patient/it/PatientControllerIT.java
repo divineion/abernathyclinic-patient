@@ -121,8 +121,8 @@ public class PatientControllerIT {
 		CreatePatientDto dto = new CreatePatientDto("Testfirstname", "Testlastname", LocalDate.of(2001, 10, 01), "f", addressDto, null);
 		
 		mockMvc.perform(post("/api/patient")
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(dto)))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto)))
 		.andExpectAll(
 				status().isCreated(),
 				jsonPath("$.uuid").isString(),
@@ -134,6 +134,16 @@ public class PatientControllerIT {
 				jsonPath("$.address.city").isString(),
 				jsonPath("$.address.zip").isString(),
 				jsonPath("$.phone").value(Matchers.nullValue())
-			);
+				);
+	}
+	
+	@Test
+	public void testCreatePatient_withInvalidFields_shouldReturnBadRequest() throws Exception {
+		CreatePatientDto dto = new CreatePatientDto("T", "Testlastname", LocalDate.of(2001, 10, 01), "f", null, null);
+		
+		mockMvc.perform(post("/api/patient")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(dto)))
+		.andExpect(status().isBadRequest());
 	}
 }
