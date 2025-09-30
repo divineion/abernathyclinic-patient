@@ -1,6 +1,7 @@
 package com.medilabo.abernathyclinic.patient.it;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,13 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medilabo.abernathyclinic.patient.dto.AddressDto;
 import com.medilabo.abernathyclinic.patient.dto.CreatePatientDto;
+import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
 
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -145,5 +150,36 @@ public class PatientControllerIT {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(dto)))
 		.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void testUpdatePatientAddress_shouldReturnOk() throws Exception {
+		Long id = 1L;
+		AddressDto address = new AddressDto("288", "Kyle Street", "North Platte", "29101");
+		UpdatePatientDto dto = new UpdatePatientDto("Bacho", "Mary", "F", address, null);
+		
+		mockMvc.perform(patch("/api/patient/{id}", id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto))
+				)
+		.andExpectAll(
+				status().is(200),
+				jsonPath("$.address.street").value("Kyle Street"),
+				jsonPath("$.firstName").value("Bacho"),
+				jsonPath("$.lastName").value("Mary")
+				);
+	}
+
+	@Test
+	public void testUpdatePatientAddress_withInvalidFirstName_shouldReturnBadRequest() throws Exception {
+		Long id = 1L;
+		AddressDto address = new AddressDto("288", "Kyle Street", "North Platte", "29101");
+		UpdatePatientDto dto = new UpdatePatientDto("B", "Mary", "F", address, null);
+		
+		mockMvc.perform(patch("/api/patient/{id}", id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto))
+				)
+			.andExpect(status().is(400));
 	}
 }
