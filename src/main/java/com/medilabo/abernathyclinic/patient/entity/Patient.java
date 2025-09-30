@@ -3,6 +3,8 @@ package com.medilabo.abernathyclinic.patient.entity;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
+@DynamicUpdate
 @Entity
 @Table(name = "patient")
 public class Patient {
