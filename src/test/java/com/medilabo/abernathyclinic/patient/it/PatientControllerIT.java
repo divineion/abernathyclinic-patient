@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -61,6 +62,36 @@ public class PatientControllerIT {
 		int id = 999;
 		
 		mockMvc.perform(get("/api/patient/id/{id}", id))
+		.andExpect(status().isNotFound());
+	}
+	
+	
+	@Test
+	public void testGetPatientByUuid_shouldReturnPatientDto() throws Exception {
+		UUID uuid = UUID.fromString("ad1ca72c-a9a4-4e26-b634-55659f2b8423");
+		
+		mockMvc.perform(get("/api/patient/uuid/{uuid}", uuid))
+		.andExpectAll(
+				status().isOk(),
+				jsonPath("$.lastName").isString(),
+				jsonPath("$.firstName").isString(),
+				jsonPath("$.birthDate").isString(),
+				jsonPath("$.gender").isString(),
+				jsonPath("$.address.streetNumber").isString(),
+				jsonPath("$.address.street").isString(),
+				jsonPath("$.address.city").isString(),
+				jsonPath("$.address.zip").isString(),
+				jsonPath("$.phone").isString(),
+				jsonPath("$.uuid").isString(),
+				jsonPath("$.id").doesNotExist()
+				);
+	}	
+	
+	@Test
+	public void testGetPatientByUuid_withUnknownUuid_shouldReturnNotFound() throws Exception {
+		UUID uuid = UUID.fromString("ad1ca72c-a9a4-4e26-b634-55659f2b8428");
+		
+		mockMvc.perform(get("/api/patient/uuid/{uuid}", uuid))
 		.andExpect(status().isNotFound());
 	}
 	
