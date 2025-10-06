@@ -1,6 +1,7 @@
 package com.medilabo.abernathyclinic.patient.service.patient;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,13 @@ public class PatientService {
 	public PatientDto findPatientById(Long id) throws PatientNotFoundException {
 		Patient patient = patientRepository.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException("No patient found with id " + id));
+		
+		return patientMapper.patientToPatientDto(patient);
+	}
+	
+	public PatientDto findPatientByUuid(UUID uuid) throws PatientNotFoundException {
+		Patient patient = patientRepository.findByUuid(uuid)
+				.orElseThrow(() -> new PatientNotFoundException("No patient found with id " + uuid));
 		
 		return patientMapper.patientToPatientDto(patient);
 	}

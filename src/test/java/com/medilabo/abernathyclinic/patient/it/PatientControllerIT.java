@@ -39,7 +39,7 @@ public class PatientControllerIT {
 	public void testGetPatientById_shouldReturnPatientDto() throws Exception {
 		int id = 1;
 		
-		mockMvc.perform(get("/api/patient/{id}", id))
+		mockMvc.perform(get("/api/patient/id/{id}", id))
 		.andExpectAll(
 			status().isOk(),
 			jsonPath("$.lastName").isString(),
@@ -60,7 +60,7 @@ public class PatientControllerIT {
 	public void testGetPatientById_withUnknownId_shouldReturnNotFound() throws Exception {
 		int id = 999;
 		
-		mockMvc.perform(get("/api/patient/{id}", id))
+		mockMvc.perform(get("/api/patient/id/{id}", id))
 		.andExpect(status().isNotFound());
 	}
 	

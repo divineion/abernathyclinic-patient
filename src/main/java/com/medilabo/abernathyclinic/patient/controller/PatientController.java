@@ -1,6 +1,7 @@
 package com.medilabo.abernathyclinic.patient.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,17 +27,21 @@ public class PatientController {
     PatientController(PatientService patientService) {
         this.patientService = patientService;
     }
-    
-	@GetMapping("/api/patient/{id}")
-	public ResponseEntity<PatientDto> getPatientById(@PathVariable Long id) throws PatientNotFoundException {	
-		PatientDto patient = patientService.findPatientById(id);
-		return ResponseEntity.ok(patient);
+
+    @GetMapping("/api/patient/id/{id}")
+	public PatientDto getPatientById(@PathVariable Long id) throws PatientNotFoundException {	
+		return patientService.findPatientById(id);
+	}
+	
+	@GetMapping("/api/patient/uuid/{uuid}")
+	public PatientDto getPatientByUuid(@PathVariable UUID uuid) throws PatientNotFoundException {
+		// si la valeur du pathvariable n'est pas un UUID valide --> erreur 400
+		return patientService.findPatientByUuid(uuid);
 	}
 	
 	@GetMapping("/api/patients")
-	public ResponseEntity<List<MinimalPatientDto>> getAllPatients() {
-		List<MinimalPatientDto> list = patientService.findAllPatient();
-		return ResponseEntity.ok(list);
+	public List<MinimalPatientDto> getAllPatients() {
+		return patientService.findAllPatient();
 	}
 	
 	@PostMapping("/api/patient")
@@ -44,7 +49,6 @@ public class PatientController {
 		PatientDto newPatient = patientService.createPatient(dto);
 		return ResponseEntity.status(201).body(newPatient);
 	}
-	
 	
 	@PatchMapping("/api/patient/{id}")
 	public ResponseEntity<PatientDto> updatePatient(@PathVariable Long id, @Valid @RequestBody UpdatePatientDto dto) throws PatientNotFoundException {
