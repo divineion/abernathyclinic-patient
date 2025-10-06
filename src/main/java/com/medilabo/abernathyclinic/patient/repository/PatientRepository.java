@@ -3,6 +3,7 @@ package com.medilabo.abernathyclinic.patient.repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 	@Override
 	@Query("select p from Patient p join fetch p.address join fetch p.address.street join fetch p.address.street.city where p.id =:id")
 	Optional<Patient> findById(Long id);
+
+	@Query("select p from Patient p join fetch p.address join fetch p.address.street join fetch p.address.street.city where p.uuid =:uuid")
+	Optional<Patient> findByUuid(UUID uuid);
 }
