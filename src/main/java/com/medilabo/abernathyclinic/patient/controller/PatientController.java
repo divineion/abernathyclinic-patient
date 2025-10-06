@@ -40,9 +40,8 @@ public class PatientController {
 	}
 	
 	@GetMapping("/api/patients")
-	public ResponseEntity<List<MinimalPatientDto>> getAllPatients() {
-		List<MinimalPatientDto> list = patientService.findAllPatient();
-		return ResponseEntity.ok(list);
+	public List<MinimalPatientDto> getAllPatients() {
+		return patientService.findAllPatient();
 	}
 	
 	@PostMapping("/api/patient")
@@ -50,7 +49,6 @@ public class PatientController {
 		PatientDto newPatient = patientService.createPatient(dto);
 		return ResponseEntity.status(201).body(newPatient);
 	}
-	
 	
 	@PatchMapping("/api/patient/{id}")
 	public ResponseEntity<PatientDto> updatePatient(@PathVariable Long id, @Valid @RequestBody UpdatePatientDto dto) throws PatientNotFoundException {
