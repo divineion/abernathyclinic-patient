@@ -27,11 +27,10 @@ public class PatientController {
     PatientController(PatientService patientService) {
         this.patientService = patientService;
     }
-    
-	@GetMapping("/api/patient/{id}")
-	public ResponseEntity<PatientDto> getPatientById(@PathVariable Long id) throws PatientNotFoundException {	
-		PatientDto patient = patientService.findPatientById(id);
-		return ResponseEntity.ok(patient);
+
+    @GetMapping("/api/patient/id/{id}")
+	public PatientDto getPatientById(@PathVariable Long id) throws PatientNotFoundException {	
+		return patientService.findPatientById(id);
 	}
 	
 	@GetMapping("/api/patient/uuid/{uuid}")
