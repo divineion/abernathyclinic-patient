@@ -34,14 +34,14 @@ public class PatientService {
 	
 	public PatientDto findPatientById(Long id) throws PatientNotFoundException {
 		Patient patient = patientRepository.findById(id)
-				.orElseThrow(() -> new PatientNotFoundException("No patient found with id " + id));
+				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + id));
 		
 		return patientMapper.patientToPatientDto(patient);
 	}
 	
 	public PatientDto findPatientByUuid(UUID uuid) throws PatientNotFoundException {
 		Patient patient = patientRepository.findByUuid(uuid)
-				.orElseThrow(() -> new PatientNotFoundException("No patient found with id " + uuid));
+				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + uuid));
 		
 		return patientMapper.patientToPatientDto(patient);
 	}
