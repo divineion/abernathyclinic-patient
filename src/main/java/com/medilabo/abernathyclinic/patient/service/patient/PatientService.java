@@ -94,10 +94,54 @@ public class PatientService {
 			}
 		}
 		
-		if (!patient.getPhone().equalsIgnoreCase(dto.phone())) {
+		if (dto.phone() != null) {
+			if (!patient.getPhone().equalsIgnoreCase(dto.phone())) {
+				System.out.println("phone has changed");
+			}
 			patient.setPhone(dto.phone());
 		}
 
+		return patientMapper.patientToPatientDto(patient);
+	}
+
+	@Transactional(rollbackOn = Exception.class)
+	public PatientDto updatePatientByUuid(UUID uuid, UpdatePatientDto dto) throws PatientNotFoundException {
+		Patient patient = patientRepository.findByUuid(uuid)
+				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + uuid));
+				
+		if (!patient.getLastName().equalsIgnoreCase(dto.lastName())) {
+			System.out.println("LastName changed");
+			patient.setLastName(dto.lastName());
+		}
+		
+		if (!patient.getFirstName().equalsIgnoreCase(dto.firstName())) {
+			System.out.println("firstName changed");
+			patient.setFirstName(dto.firstName());
+		}
+		
+		if (!patient.getGender().equalsIgnoreCase(dto.gender())) {
+			System.out.println("gender changed");
+			patient.setGender(dto.gender());
+		}
+		
+		if (dto.address() != null) {
+			Address providedAddress = addAddressIfNotExists(dto.address());
+			
+			if (patient.getAddress() != null) {
+				if (!patient.getAddress().equals(providedAddress)) {
+					System.out.println("address changed");
+					patient.setAddress(providedAddress);
+				}
+			}
+		}
+		
+		if (dto.phone() != null) {
+			if (!patient.getPhone().equalsIgnoreCase(dto.phone())) {
+				System.out.println("phone has changed");
+			}
+			patient.setPhone(dto.phone());
+		}
+		
 		return patientMapper.patientToPatientDto(patient);
 	}
 }
