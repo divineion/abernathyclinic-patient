@@ -16,9 +16,9 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 	List<Patient> findByNameAndBirthDate(String lastName, String firstName, LocalDate birthDate);
 	
 	@Override
-	@Query("select p from Patient p join fetch p.address join fetch p.address.street join fetch p.address.street.city where p.id =:id")
+	@Query("select p from Patient p left join fetch p.address a left join fetch a.street s left join fetch s.city where p.id =:id")
 	Optional<Patient> findById(Long id);
 
-	@Query("select p from Patient p join fetch p.address join fetch p.address.street join fetch p.address.street.city where p.uuid =:uuid")
+	@Query("select p from Patient p left join fetch p.address a left join fetch a.street s left join fetch s.city where p.uuid =:uuid")
 	Optional<Patient> findByUuid(UUID uuid);
 }
