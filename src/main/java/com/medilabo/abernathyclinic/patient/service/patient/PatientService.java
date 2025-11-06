@@ -39,6 +39,12 @@ public class PatientService {
 		return patientMapper.patientToPatientDto(patient);
 	}
 	
+	/**
+	 * This method is used by the client side application. 
+	 * @param uuid
+	 * @return
+	 * @throws PatientNotFoundException
+	 */
 	public PatientDto findPatientByUuid(UUID uuid) throws PatientNotFoundException {
 		Patient patient = patientRepository.findByUuid(uuid)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + uuid));
@@ -46,6 +52,10 @@ public class PatientService {
 		return patientMapper.patientToPatientDto(patient);
 	}
 
+	/**
+	 * Retrieves a list of all patients, returned as MinimalPatientDto (for list views).
+	 * @return
+	 */
 	public List<MinimalPatientDto> findAllPatient() {
 		List<Patient> patientsList = patientRepository.findAll();
 		
@@ -54,7 +64,14 @@ public class PatientService {
 		return dtoList;
 	}
 
-	public PatientDto createPatient(CreatePatientDto dto) {
+	/**
+	 * Creates a new patient, applying address validation and creation if one is provided. 
+	 * @param dto
+	 * @return
+	 * @throws UncompleteAddressException
+	 */
+	@Transactional(rollbackOn = Exception.class)
+	public PatientDto createPatient(CreatePatientDto dto) throws UncompleteAddressException {
 		Patient newPatient = patientMapper.createPatientDtoToPatient(dto);
 
 		if (dto.address() != null) {
@@ -65,10 +82,13 @@ public class PatientService {
 		return patientMapper.patientToPatientDto(patientRepository.save(newPatient));
 	}
 	
-	public Address addAddressIfNotExists(AddressDto address) {
-		return addressService.addAddress(address);
-	}
-	
+	/**
+	 * Used for communication between microservices. 
+	 * Updates a new patient, applying address validation and creation if one is provided. 
+	 * @return {@link PatientDto} a representation of the updated patient
+	 * @throws PatientNotFoundException
+	 * @throws UncompleteAddressException
+	 */
 	@Transactional(rollbackOn = Exception.class)
 	public PatientDto updatePatient(Long id, UpdatePatientDto dto) throws PatientNotFoundException {
 		Patient patient = patientRepository.findById(id)
@@ -104,6 +124,14 @@ public class PatientService {
 		return patientMapper.patientToPatientDto(patient);
 	}
 
+	/**
+	 * 
+	 * @param uuid
+	 * @param dto
+	 * @return
+	 * @throws PatientNotFoundException
+	 * @throws UncompleteAddressException
+	 */
 	@Transactional(rollbackOn = Exception.class)
 	public PatientDto updatePatientByUuid(UUID uuid, UpdatePatientDto dto) throws PatientNotFoundException {
 		Patient patient = patientRepository.findByUuid(uuid)
