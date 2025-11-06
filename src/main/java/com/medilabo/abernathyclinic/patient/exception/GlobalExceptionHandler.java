@@ -18,4 +18,9 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorDto> handlePatientNotFoundException(PatientNotFoundException e) {
 		return ResponseEntity.status(404).body(new ErrorDto(404, e.getMessage()));
 	}
+	
+	@ExceptionHandler(UncompleteAddressException.class)
+	public ResponseEntity<ErrorDto> handlePartialPatientAddressException(UncompleteAddressException e) {
+		return ResponseEntity.status(400).body(new ErrorDto(404, e.getMessage()));
+	}
 }
