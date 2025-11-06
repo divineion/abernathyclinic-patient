@@ -32,6 +32,44 @@ public class PatientService {
 		this.addressService = addressService;
 	}
 	
+	private boolean isEmptyAddress(AddressDto addressDto) {
+		return addressDto.city().isBlank() 
+				&& addressDto.street().isBlank() 
+				&& addressDto.streetNumber().isBlank() 
+				&& addressDto.zip().isBlank();
+	}
+	
+	private boolean isPartialAddress(AddressDto dto) {
+		boolean hasMissingFields = dto.city().isBlank() 
+				|| dto.street().isBlank() 
+				|| dto.streetNumber().isBlank() 
+				|| dto.zip().isBlank();
+		
+		return !isEmptyAddress(dto) && hasMissingFields;
+	}
+	
+	private boolean isSameAddress(AddressDto addressDto, Address address) {
+		// on transfère la logiqe de protection contre les NPE ici
+		if (address != null) {
+			return addressDto.city().equalsIgnoreCase(address.getStreet().getCity().getName())
+				&& addressDto.zip().equalsIgnoreCase(address.getStreet().getCity().getZip())
+				&& addressDto.streetNumber().equalsIgnoreCase(address.getStreetNumber())
+				&& addressDto.street().equalsIgnoreCase(address.getStreet().getName());		
+		}
+		
+		return false;
+	}
+	
+	public Address addAddressIfNotExists(AddressDto address) {
+		return addressService.addAddress(address);
+	}
+	
+	/**
+	 * This method is used for communication between backend microservice. 
+	 * @param long id
+	 * @return
+	 * @throws PatientNotFoundException
+	 */
 	public PatientDto findPatientById(Long id) throws PatientNotFoundException {
 		Patient patient = patientRepository.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + id));
