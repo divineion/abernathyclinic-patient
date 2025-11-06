@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.medilabo.abernathyclinic.patient.dto.CreatePatientDto;
 import com.medilabo.abernathyclinic.patient.dto.PatientDto;
 import com.medilabo.abernathyclinic.patient.entity.Patient;
+import com.medilabo.abernathyclinic.patient.exception.UncompleteAddressException;
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
 import com.medilabo.abernathyclinic.patient.repository.PatientRepository;
 import com.medilabo.abernathyclinic.patient.service.address.AddressService;
@@ -67,7 +68,7 @@ public class PatientServiceTest {
 	}
 	
 	@Test
-	public void testcreatePatient_withoutAddress_shouldNotCallAddressService() {
+	public void testcreatePatient_withoutAddress_shouldNotCallAddressService() throws UncompleteAddressException {
 		// arrange		
 		CreatePatientDto dto = new CreatePatientDto("Testfirstname", "Testlastname", 
 				LocalDate.of(2001, 10, 01), "f", null, "004-901-019");
