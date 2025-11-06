@@ -13,6 +13,7 @@ import com.medilabo.abernathyclinic.patient.dto.PatientDto;
 import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
 import com.medilabo.abernathyclinic.patient.entity.Address;
 import com.medilabo.abernathyclinic.patient.entity.Patient;
+import com.medilabo.abernathyclinic.patient.exception.UncompleteAddressException;
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
 import com.medilabo.abernathyclinic.patient.repository.PatientRepository;
 import com.medilabo.abernathyclinic.patient.service.address.AddressService;
@@ -25,8 +26,7 @@ public class PatientService {
 	private final PatientMapper patientMapper;
 	private final AddressService addressService;
 	
-	public PatientService(PatientRepository patientRepository, PatientMapper patientMapper, 
-			AddressService addressService) {
+	public PatientService(PatientRepository patientRepository, PatientMapper patientMapper, AddressService addressService) {
 		this.patientRepository = patientRepository;
 		this.patientMapper = patientMapper;
 		this.addressService = addressService;
@@ -111,12 +111,23 @@ public class PatientService {
 	@Transactional(rollbackOn = Exception.class)
 	public PatientDto createPatient(CreatePatientDto dto) throws UncompleteAddressException {
 		Patient newPatient = patientMapper.createPatientDtoToPatient(dto);
-
-		if (dto.address() != null) {
-			Address patientAddress = addAddressIfNotExists(dto.address());
-			newPatient.setAddress(patientAddress);
+		
+		if (dto.address() == null || isEmptyAddress(dto.address())) {
+			newPatient.setAddress(null);
+		} else {
+			if (isPartialAddress(dto.address())) {
+				throw new UncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
+			} else {
+				newPatient.setAddress(addAddressIfNotExists(dto.address()));
+			}
 		}
-
+		
+		if (dto.phone() == null || dto.phone().isBlank()) {				
+			newPatient.setPhone(null);
+		} else {
+			newPatient.setPhone(dto.phone());
+		}
+		
 		return patientMapper.patientToPatientDto(patientRepository.save(newPatient));
 	}
 	
@@ -128,9 +139,27 @@ public class PatientService {
 	 * @throws UncompleteAddressException
 	 */
 	@Transactional(rollbackOn = Exception.class)
-	public PatientDto updatePatient(Long id, UpdatePatientDto dto) throws PatientNotFoundException {
+	public PatientDto updatePatient(Long id, UpdatePatientDto dto) throws PatientNotFoundException, UncompleteAddressException {
 		Patient patient = patientRepository.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + id));
+		
+		if (dto.address() == null || isEmptyAddress(dto.address())) {
+			patient.setAddress(null);
+		} else {
+			if (isPartialAddress(dto.address())) {
+				throw new UncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
+			}
+								
+			if (!isSameAddress(dto.address(), patient.getAddress())) {
+				patient.setAddress(addAddressIfNotExists(dto.address()));
+			}
+		}
+		
+		if (dto.phone() == null || dto.phone().isBlank()) {				
+			patient.setPhone(null);
+		} else {
+			patient.setPhone(dto.phone());
+		}
 		
 		if (!patient.getLastName().equalsIgnoreCase(dto.lastName())) {
 			patient.setLastName(dto.lastName());
@@ -142,21 +171,6 @@ public class PatientService {
 		
 		if (!patient.getGender().equalsIgnoreCase(dto.gender())) {
 			patient.setGender(dto.gender());
-		}
-		
-		if (dto.address() != null) {
-			Address providedAddress = addAddressIfNotExists(dto.address());
-			
-			if (!patient.getAddress().equals(providedAddress)) {
-				patient.setAddress(providedAddress);
-			}
-		}
-		
-		if (dto.phone() != null) {
-			if (!patient.getPhone().equalsIgnoreCase(dto.phone())) {
-				System.out.println("phone has changed");
-			}
-			patient.setPhone(dto.phone());
 		}
 
 		return patientMapper.patientToPatientDto(patient);
@@ -171,41 +185,38 @@ public class PatientService {
 	 * @throws UncompleteAddressException
 	 */
 	@Transactional(rollbackOn = Exception.class)
-	public PatientDto updatePatientByUuid(UUID uuid, UpdatePatientDto dto) throws PatientNotFoundException {
+	public PatientDto updatePatientByUuid(UUID uuid, UpdatePatientDto dto) throws PatientNotFoundException, UncompleteAddressException {
 		Patient patient = patientRepository.findByUuid(uuid)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + uuid));
+		
+		if (dto.address() == null || isEmptyAddress(dto.address())) {
+			patient.setAddress(null);
+		} else {
+			if (isPartialAddress(dto.address())) {
+				throw new UncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
+			} 
+			
+			if (!isSameAddress(dto.address(), patient.getAddress())) {
+				patient.setAddress(addAddressIfNotExists(dto.address()));
+			}
+		}
+		
+		if (dto.phone() == null || dto.phone().isBlank()) {				
+			patient.setPhone(null);
+		} else {
+			patient.setPhone(dto.phone());
+		}
 				
 		if (!patient.getLastName().equalsIgnoreCase(dto.lastName())) {
-			System.out.println("LastName changed");
 			patient.setLastName(dto.lastName());
 		}
 		
 		if (!patient.getFirstName().equalsIgnoreCase(dto.firstName())) {
-			System.out.println("firstName changed");
 			patient.setFirstName(dto.firstName());
 		}
 		
 		if (!patient.getGender().equalsIgnoreCase(dto.gender())) {
-			System.out.println("gender changed");
 			patient.setGender(dto.gender());
-		}
-		
-		if (dto.address() != null) {
-			Address providedAddress = addAddressIfNotExists(dto.address());
-			
-			if (patient.getAddress() != null) {
-				if (!patient.getAddress().equals(providedAddress)) {
-					System.out.println("address changed");
-					patient.setAddress(providedAddress);
-				}
-			}
-		}
-		
-		if (dto.phone() != null) {
-			if (!patient.getPhone().equalsIgnoreCase(dto.phone())) {
-				System.out.println("phone has changed");
-			}
-			patient.setPhone(dto.phone());
 		}
 		
 		return patientMapper.patientToPatientDto(patient);
