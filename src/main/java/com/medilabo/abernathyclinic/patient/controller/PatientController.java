@@ -15,7 +15,7 @@ import com.medilabo.abernathyclinic.patient.dto.CreatePatientDto;
 import com.medilabo.abernathyclinic.patient.dto.MinimalPatientDto;
 import com.medilabo.abernathyclinic.patient.dto.PatientDto;
 import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
-import com.medilabo.abernathyclinic.patient.exception.UncompleteAddressException;
+import com.medilabo.abernathyclinic.patient.exception.IncompleteAddressException;
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
 import com.medilabo.abernathyclinic.patient.service.patient.PatientService;
 
@@ -46,17 +46,17 @@ public class PatientController {
 	}
 	
 	@PostMapping("/api/patient")
-	public ResponseEntity<PatientDto> createPatient(@Valid @RequestBody CreatePatientDto dto) throws UncompleteAddressException {
+	public ResponseEntity<PatientDto> createPatient(@Valid @RequestBody CreatePatientDto dto) throws IncompleteAddressException {
 		return ResponseEntity.status(201).body(patientService.createPatient(dto));
 	}
 	
 	@PatchMapping("/api/patient/{id}")
-	public PatientDto updatePatient(@PathVariable Long id, @Valid @RequestBody UpdatePatientDto dto) throws PatientNotFoundException, UncompleteAddressException {
+	public PatientDto updatePatient(@PathVariable Long id, @Valid @RequestBody UpdatePatientDto dto) throws PatientNotFoundException, IncompleteAddressException {
 		return patientService.updatePatient(id, dto);
 	}
 	
 	@PatchMapping("/api/patient/{uuid}/update")
-	public PatientDto updatePatientByUuid(@PathVariable UUID uuid, @Valid @RequestBody UpdatePatientDto dto) throws PatientNotFoundException, UncompleteAddressException {
+	public PatientDto updatePatientByUuid(@PathVariable UUID uuid, @Valid @RequestBody UpdatePatientDto dto) throws PatientNotFoundException, IncompleteAddressException {
 		return patientService.updatePatientByUuid(uuid, dto);
 	}
 }

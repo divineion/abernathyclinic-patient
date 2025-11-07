@@ -13,7 +13,7 @@ import com.medilabo.abernathyclinic.patient.dto.PatientDto;
 import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
 import com.medilabo.abernathyclinic.patient.entity.Address;
 import com.medilabo.abernathyclinic.patient.entity.Patient;
-import com.medilabo.abernathyclinic.patient.exception.UncompleteAddressException;
+import com.medilabo.abernathyclinic.patient.exception.IncompleteAddressException;
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
 import com.medilabo.abernathyclinic.patient.repository.PatientRepository;
 import com.medilabo.abernathyclinic.patient.service.address.AddressService;
@@ -106,17 +106,17 @@ public class PatientService {
 	 * Creates a new patient, applying address validation and creation if one is provided. 
 	 * @param dto
 	 * @return
-	 * @throws UncompleteAddressException
+	 * @throws IncompleteAddressException
 	 */
 	@Transactional(rollbackOn = Exception.class)
-	public PatientDto createPatient(CreatePatientDto dto) throws UncompleteAddressException {
+	public PatientDto createPatient(CreatePatientDto dto) throws IncompleteAddressException {
 		Patient newPatient = patientMapper.createPatientDtoToPatient(dto);
 		
 		if (dto.address() == null || isEmptyAddress(dto.address())) {
 			newPatient.setAddress(null);
 		} else {
 			if (isPartialAddress(dto.address())) {
-				throw new UncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
+				throw new IncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
 			} else {
 				newPatient.setAddress(addAddressIfNotExists(dto.address()));
 			}
@@ -136,10 +136,10 @@ public class PatientService {
 	 * Updates a new patient, applying address validation and creation if one is provided. 
 	 * @return {@link PatientDto} a representation of the updated patient
 	 * @throws PatientNotFoundException
-	 * @throws UncompleteAddressException
+	 * @throws IncompleteAddressException
 	 */
 	@Transactional(rollbackOn = Exception.class)
-	public PatientDto updatePatient(Long id, UpdatePatientDto dto) throws PatientNotFoundException, UncompleteAddressException {
+	public PatientDto updatePatient(Long id, UpdatePatientDto dto) throws PatientNotFoundException, IncompleteAddressException {
 		Patient patient = patientRepository.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + id));
 		
@@ -147,7 +147,7 @@ public class PatientService {
 			patient.setAddress(null);
 		} else {
 			if (isPartialAddress(dto.address())) {
-				throw new UncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
+				throw new IncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
 			}
 								
 			if (!isSameAddress(dto.address(), patient.getAddress())) {
@@ -182,10 +182,10 @@ public class PatientService {
 	 * @param dto
 	 * @return
 	 * @throws PatientNotFoundException
-	 * @throws UncompleteAddressException
+	 * @throws IncompleteAddressException
 	 */
 	@Transactional(rollbackOn = Exception.class)
-	public PatientDto updatePatientByUuid(UUID uuid, UpdatePatientDto dto) throws PatientNotFoundException, UncompleteAddressException {
+	public PatientDto updatePatientByUuid(UUID uuid, UpdatePatientDto dto) throws PatientNotFoundException, IncompleteAddressException {
 		Patient patient = patientRepository.findByUuid(uuid)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + uuid));
 		
@@ -193,7 +193,7 @@ public class PatientService {
 			patient.setAddress(null);
 		} else {
 			if (isPartialAddress(dto.address())) {
-				throw new UncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
+				throw new IncompleteAddressException(ApiMessages.INCOMPLETE_ADDRESS);
 			} 
 			
 			if (!isSameAddress(dto.address(), patient.getAddress())) {
