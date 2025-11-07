@@ -2,6 +2,7 @@ package com.medilabo.abernathyclinic.patient.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -17,9 +18,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.medilabo.abernathyclinic.patient.dto.AddressDto;
 import com.medilabo.abernathyclinic.patient.dto.CreatePatientDto;
 import com.medilabo.abernathyclinic.patient.dto.PatientDto;
+import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
+import com.medilabo.abernathyclinic.patient.entity.Address;
+import com.medilabo.abernathyclinic.patient.entity.City;
 import com.medilabo.abernathyclinic.patient.entity.Patient;
+import com.medilabo.abernathyclinic.patient.entity.Street;
+import com.medilabo.abernathyclinic.patient.exception.IncompleteAddressException;
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
 import com.medilabo.abernathyclinic.patient.repository.PatientRepository;
 import com.medilabo.abernathyclinic.patient.service.address.AddressService;
@@ -39,6 +46,15 @@ public class PatientServiceTest {
 	
 	@Mock
 	private AddressService addressService;
+	
+	private final static String STREET_NAME = "Test str.";
+	private final static String CITY_NAME = "Testcity";
+	private final static String ZIP = "00000";
+	
+	private final static City CITY = new City(CITY_NAME, ZIP); 
+	private final static Street STREET = new Street(STREET_NAME, CITY);
+	private final static String STREET_NUMBER = "6";
+
 	
 	@Test
 	public void testFindPatientById_whenPatientExists_shouldReturnDto() throws PatientNotFoundException {
@@ -67,7 +83,7 @@ public class PatientServiceTest {
 	}
 	
 	@Test
-	public void testcreatePatient_withoutAddress_shouldNotCallAddressService() {
+	public void testcreatePatient_withoutAddress_shouldNotCallAddressService() throws IncompleteAddressException {
 		// arrange		
 		CreatePatientDto dto = new CreatePatientDto("Testfirstname", "Testlastname", 
 				LocalDate.of(2001, 10, 01), "f", null, "004-901-019");
@@ -87,5 +103,63 @@ public class PatientServiceTest {
 		
 		// assert
 		verify(addressService, never()).addAddress(dto.address());
+	}
+	
+	/**
+	 * Ensures addresses are not persisted if they not change on patient update. 
+	 * @throws PatientNotFoundException
+	 * @throws IncompleteAddressException
+	 */
+	@Test
+	public void testUpdatePatient_withSameAddress_shouldNotCallAddressService() throws PatientNotFoundException, IncompleteAddressException {
+		// arrange
+		Address address = new Address(STREET_NUMBER, STREET);
+		Patient patient = new Patient("AnyFirstName", "AnyLastName", LocalDate.of(2006, 6, 26), "F", address, null);
+		
+		AddressDto addressDto = new AddressDto(STREET_NUMBER, STREET_NAME, CITY_NAME, ZIP);
+		UpdatePatientDto dto = new UpdatePatientDto("AnyFirstName", "AnyLastName", "F", addressDto, null);
+		
+		when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
+		
+		//act
+		service.updatePatient(1L, dto);
+		
+		// assert
+		verify(addressService, never()).addAddress(addressDto);
+	}
+	
+	/**
+	 * Ensures address is persisted on patient update. 
+	 * @throws PatientNotFoundException
+	 * @throws IncompleteAddressException
+	 */
+	@Test
+	public void testUpdatePatient_withUpdatedAddress_shouldCallAddressService() throws PatientNotFoundException, IncompleteAddressException {
+		// arrange
+		Address address = new Address(STREET_NUMBER, STREET);
+		Patient patient = new Patient("AnyFirstName", "AnyLastName", LocalDate.of(2006, 6, 26), "F", address, null);
+		
+		AddressDto addressDto = new AddressDto(STREET_NUMBER, "New Street", CITY_NAME, ZIP);
+		UpdatePatientDto dto = new UpdatePatientDto("AnyFirstName", "AnyLastName", "F", addressDto, null);
+		
+		UUID uuid = UUID.randomUUID();
+		
+		when(patientRepository.findByUuid(uuid)).thenReturn(Optional.of(patient));
+		
+		//act
+		service.updatePatientByUuid(uuid, dto);
+		
+		// assert
+		verify(addressService, atLeastOnce()).addAddress(addressDto);
+	}
+	
+	@Test
+	public void testCreatePatient_withPartialAddress_shouldThrowException() throws IncompleteAddressException {
+		// arrange
+		AddressDto addressDto = new AddressDto(STREET_NUMBER, "", CITY_NAME, ZIP);
+		CreatePatientDto dto = new CreatePatientDto("AnyFirstName", "AnyLastName", LocalDate.of(2000, 01, 01), "F", addressDto, null);
+						
+		//act and assert
+		assertThrows(IncompleteAddressException.class, () -> service.createPatient(dto));
 	}
 }

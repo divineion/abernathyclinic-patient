@@ -30,6 +30,12 @@ import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class PatientControllerIT {
+	private static final UUID UUID_PATIENT_ALMEIDA = UUID.fromString("ad1ca72c-a9a4-4e26-b634-55659f2b8423");
+	private static final UUID UUID_PATIENT_BACHO   = UUID.fromString("e64932dd-4d17-4070-aafb-8b2dd309c628");
+	private static final UUID UUID_PATIENT_CIMMS   = UUID.fromString("101b8bbc-b56e-4549-bc31-d1525340353c");
+	private static final UUID UUID_PATIENT_DESTARAC = UUID.fromString("aa1358cb-024b-4e59-a03c-5c463aee170b");
+
+	
 	@Autowired
 	MockMvc mockMvc;
 	
@@ -64,7 +70,6 @@ public class PatientControllerIT {
 		mockMvc.perform(get("/api/patient/id/{id}", id))
 		.andExpect(status().isNotFound());
 	}
-	
 	
 	@Test
 	public void testGetPatientByUuid_shouldReturnPatientDto() throws Exception {
@@ -187,7 +192,7 @@ public class PatientControllerIT {
 	public void testUpdatePatientAddress_shouldReturnOk() throws Exception {
 		Long id = 1L;
 		AddressDto address = new AddressDto("288", "Kyle Street", "North Platte", "29101");
-		UpdatePatientDto dto = new UpdatePatientDto("Bacho", "Mary", "F", address, null);
+		UpdatePatientDto dto = new UpdatePatientDto("Bacho", "Mary", "F", address, "000-111-222");
 		
 		mockMvc.perform(patch("/api/patient/{id}", id)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -197,20 +202,65 @@ public class PatientControllerIT {
 				status().is(200),
 				jsonPath("$.address.street").value("Kyle Street"),
 				jsonPath("$.firstName").value("Bacho"),
-				jsonPath("$.lastName").value("Mary")
-				);
+				jsonPath("$.lastName").value("Mary"));
+	}
+	
+	@Test
+	public void testUpdatePatientEmptyAddress_shouldReturnOk() throws Exception {
+		AddressDto address = new AddressDto("", "", "", "");
+		UpdatePatientDto dto = new UpdatePatientDto("Bacho", "Mary", "F", address, "111-222-999");
+		
+		mockMvc.perform(patch("/api/patient/{uuid}/update", UUID_PATIENT_BACHO)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto))
+				)
+		
+		.andExpectAll(
+				status().is(200));
 	}
 
 	@Test
-	public void testUpdatePatientAddress_withInvalidFirstName_shouldReturnBadRequest() throws Exception {
+	public void testUpdatePatient_withInvalidFirstName_shouldReturnBadRequest() throws Exception {
 		Long id = 1L;
 		AddressDto address = new AddressDto("288", "Kyle Street", "North Platte", "29101");
-		UpdatePatientDto dto = new UpdatePatientDto("B", "Mary", "F", address, null);
+		UpdatePatientDto dto = new UpdatePatientDto("B", "Mary", "F", address, "666-777-888");
 		
 		mockMvc.perform(patch("/api/patient/{id}", id)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(dto))
 				)
 			.andExpect(status().is(400));
+	}
+	
+	/**
+	 * Ensure patient with uncomplete address 
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdatePatient_withPartialAddress_shouldReturnBadRequest() throws Exception {
+		AddressDto address = new AddressDto("288", "Kyle Street", "", "");
+		UpdatePatientDto dto = new UpdatePatientDto("Almeida", "Mary", "F", address, "555-666-777");
+		
+		mockMvc.perform(patch("/api/patient/{uuid}/update", UUID_PATIENT_ALMEIDA)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto))
+			)
+		.andExpect(status().isBadRequest());
+	}
+	
+	/**
+	 * Ensure patient with null address is correctly persisted
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdatePatient_withEmptyAddress_shouldReturnOK() throws Exception {
+		AddressDto address = new AddressDto("", "", "", "");
+		UpdatePatientDto dto = new UpdatePatientDto("Almeida", "Mary", "F", address, "555-666-777");
+		
+		mockMvc.perform(patch("/api/patient/{uuid}/update", UUID_PATIENT_ALMEIDA)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto))
+				)
+		.andExpect(status().isOk());
 	}
 }
