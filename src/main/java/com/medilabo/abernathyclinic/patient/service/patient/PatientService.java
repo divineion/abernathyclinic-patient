@@ -10,6 +10,7 @@ import com.medilabo.abernathyclinic.patient.dto.AddressDto;
 import com.medilabo.abernathyclinic.patient.dto.CreatePatientDto;
 import com.medilabo.abernathyclinic.patient.dto.MinimalPatientDto;
 import com.medilabo.abernathyclinic.patient.dto.PatientDto;
+import com.medilabo.abernathyclinic.patient.dto.PatientReportInfoDto;
 import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
 import com.medilabo.abernathyclinic.patient.entity.Address;
 import com.medilabo.abernathyclinic.patient.entity.Patient;
@@ -220,5 +221,10 @@ public class PatientService {
 		}
 		
 		return patientMapper.patientToPatientDto(patient);
+	}
+
+	public PatientReportInfoDto getPatientInfoForReport(UUID uuid) throws PatientNotFoundException {
+		return patientRepository.findReportPatientInfo(uuid)
+				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND));
 	}
 }
