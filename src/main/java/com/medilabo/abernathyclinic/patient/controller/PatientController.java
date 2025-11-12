@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.medilabo.abernathyclinic.patient.dto.CreatePatientDto;
 import com.medilabo.abernathyclinic.patient.dto.MinimalPatientDto;
 import com.medilabo.abernathyclinic.patient.dto.PatientDto;
+import com.medilabo.abernathyclinic.patient.dto.PatientReportInfoDto;
 import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
 import com.medilabo.abernathyclinic.patient.exception.IncompleteAddressException;
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
@@ -58,5 +59,10 @@ public class PatientController {
 	@PatchMapping("/api/patient/{uuid}/update")
 	public PatientDto updatePatientByUuid(@PathVariable UUID uuid, @Valid @RequestBody UpdatePatientDto dto) throws PatientNotFoundException, IncompleteAddressException {
 		return patientService.updatePatientByUuid(uuid, dto);
+	}
+	
+	@GetMapping("/api/patient/{uuid}/report-info")
+	public PatientReportInfoDto getPatientReportInfo(@PathVariable UUID uuid) throws PatientNotFoundException {
+		return patientService.getPatientInfoForReport(uuid);
 	}
 }
