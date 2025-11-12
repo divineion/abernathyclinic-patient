@@ -62,7 +62,7 @@ public class PatientController {
 	}
 	
 	@GetMapping("/api/patient/{uuid}/report-info")
-	public PatientReportInfoDto getPatientReportInfo(@PathVariable UUID uuid) {
+	public PatientReportInfoDto getPatientReportInfo(@PathVariable UUID uuid) throws PatientNotFoundException {
 		return patientService.getPatientInfoForReport(uuid);
 	}
 }
