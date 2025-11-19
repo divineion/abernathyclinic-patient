@@ -83,10 +83,10 @@
 	        <artifactId>mapstruct</artifactId>
 	        <version>${org.mapstruct.version}</version>
 	    </dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter</artifactId>-->
-<!--		</dependency>-->
+  		<dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -122,6 +122,11 @@
 	            <groupId>org.jacoco</groupId>
 	            <artifactId>jacoco-maven-plugin</artifactId>
 	            <version>0.8.13</version>
+                <configuration>
+			        <excludes>
+			            <exclude>com/medilabo/abernathyclinic/patient/config/</exclude>
+			        </excludes>
+			     </configuration>
 	            <executions>
 	                <execution>
 	                    <id>jacoco-initialize</id>

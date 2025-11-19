@@ -3,6 +3,8 @@ package com.medilabo.abernathyclinic.patient.service.patient;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.medilabo.abernathyclinic.patient.constants.ApiMessages;
@@ -96,7 +98,9 @@ public class PatientService {
 	 * @return
 	 */
 	public List<MinimalPatientDto> findAllPatient() {
-		List<Patient> patientsList = patientRepository.findAll();
+		Sort sort = Sort.by(Direction.ASC, "lastName");
+
+		List<Patient> patientsList = patientRepository.findAll(sort);
 		
 		List<MinimalPatientDto> dtoList = patientMapper.patientsListToMinimalPatientDtoList(patientsList);
 		
@@ -169,10 +173,6 @@ public class PatientService {
 		if (!patient.getFirstName().equalsIgnoreCase(dto.firstName())) {
 			patient.setFirstName(dto.firstName());
 		}
-		
-		if (!patient.getGender().equalsIgnoreCase(dto.gender())) {
-			patient.setGender(dto.gender());
-		}
 
 		return patientMapper.patientToPatientDto(patient);
 	}
@@ -214,10 +214,6 @@ public class PatientService {
 		
 		if (!patient.getFirstName().equalsIgnoreCase(dto.firstName())) {
 			patient.setFirstName(dto.firstName());
-		}
-		
-		if (!patient.getGender().equalsIgnoreCase(dto.gender())) {
-			patient.setGender(dto.gender());
 		}
 		
 		return patientMapper.patientToPatientDto(patient);

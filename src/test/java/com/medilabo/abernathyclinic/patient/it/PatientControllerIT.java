@@ -192,7 +192,7 @@ public class PatientControllerIT {
 	public void testUpdatePatientAddress_shouldReturnOk() throws Exception {
 		Long id = 1L;
 		AddressDto address = new AddressDto("288", "Kyle Street", "North Platte", "29101");
-		UpdatePatientDto dto = new UpdatePatientDto("Bacho", "Mary", "F", address, "000-111-222");
+		UpdatePatientDto dto = new UpdatePatientDto("Bacho", "Mary", address, "000-111-222");
 		
 		mockMvc.perform(patch("/api/patient/{id}", id)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -208,7 +208,7 @@ public class PatientControllerIT {
 	@Test
 	public void testUpdatePatientEmptyAddress_shouldReturnOk() throws Exception {
 		AddressDto address = new AddressDto("", "", "", "");
-		UpdatePatientDto dto = new UpdatePatientDto("Bacho", "Mary", "F", address, "111-222-999");
+		UpdatePatientDto dto = new UpdatePatientDto("Bacho", "Mary", address, "111-222-999");
 		
 		mockMvc.perform(patch("/api/patient/{uuid}/update", UUID_PATIENT_BACHO)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -223,7 +223,7 @@ public class PatientControllerIT {
 	public void testUpdatePatient_withInvalidFirstName_shouldReturnBadRequest() throws Exception {
 		Long id = 1L;
 		AddressDto address = new AddressDto("288", "Kyle Street", "North Platte", "29101");
-		UpdatePatientDto dto = new UpdatePatientDto("B", "Mary", "F", address, "666-777-888");
+		UpdatePatientDto dto = new UpdatePatientDto("B", "Mary", address, "666-777-888");
 		
 		mockMvc.perform(patch("/api/patient/{id}", id)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -239,7 +239,7 @@ public class PatientControllerIT {
 	@Test
 	public void testUpdatePatient_withPartialAddress_shouldReturnBadRequest() throws Exception {
 		AddressDto address = new AddressDto("288", "Kyle Street", "", "");
-		UpdatePatientDto dto = new UpdatePatientDto("Almeida", "Mary", "F", address, "555-666-777");
+		UpdatePatientDto dto = new UpdatePatientDto("Almeida", "Mary", address, "555-666-777");
 		
 		mockMvc.perform(patch("/api/patient/{uuid}/update", UUID_PATIENT_ALMEIDA)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -255,7 +255,7 @@ public class PatientControllerIT {
 	@Test
 	public void testUpdatePatient_withEmptyAddress_shouldReturnOK() throws Exception {
 		AddressDto address = new AddressDto("", "", "", "");
-		UpdatePatientDto dto = new UpdatePatientDto("Almeida", "Mary", "F", address, "555-666-777");
+		UpdatePatientDto dto = new UpdatePatientDto("Almeida", "Mary", address, "555-666-777");
 		
 		mockMvc.perform(patch("/api/patient/{uuid}/update", UUID_PATIENT_ALMEIDA)
 				.contentType(MediaType.APPLICATION_JSON)

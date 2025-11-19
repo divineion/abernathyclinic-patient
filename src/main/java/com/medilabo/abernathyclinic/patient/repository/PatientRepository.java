@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,6 +13,8 @@ import com.medilabo.abernathyclinic.patient.dto.PatientReportInfoDto;
 import com.medilabo.abernathyclinic.patient.entity.Patient;
 
 public interface PatientRepository extends JpaRepository<Patient, Long> {
+	@Override
+	List<Patient> findAll(Sort sort);
 	
 	@Query("select p from Patient p where p.lastName = :lastName and p.firstName = :firstName and p.birthDate = :birthDate")
 	List<Patient> findByNameAndBirthDate(String lastName, String firstName, LocalDate birthDate);

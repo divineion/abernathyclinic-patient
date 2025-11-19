@@ -117,7 +117,7 @@ public class PatientServiceTest {
 		Patient patient = new Patient("AnyFirstName", "AnyLastName", LocalDate.of(2006, 6, 26), "F", address, null);
 		
 		AddressDto addressDto = new AddressDto(STREET_NUMBER, STREET_NAME, CITY_NAME, ZIP);
-		UpdatePatientDto dto = new UpdatePatientDto("AnyFirstName", "AnyLastName", "F", addressDto, null);
+		UpdatePatientDto dto = new UpdatePatientDto("AnyFirstName", "AnyLastName", addressDto, null);
 		
 		when(patientRepository.findById(1L)).thenReturn(Optional.of(patient));
 		
@@ -140,7 +140,7 @@ public class PatientServiceTest {
 		Patient patient = new Patient("AnyFirstName", "AnyLastName", LocalDate.of(2006, 6, 26), "F", address, null);
 		
 		AddressDto addressDto = new AddressDto(STREET_NUMBER, "New Street", CITY_NAME, ZIP);
-		UpdatePatientDto dto = new UpdatePatientDto("AnyFirstName", "AnyLastName", "F", addressDto, null);
+		UpdatePatientDto dto = new UpdatePatientDto("AnyFirstName", "AnyLastName", addressDto, null);
 		
 		UUID uuid = UUID.randomUUID();
 		
