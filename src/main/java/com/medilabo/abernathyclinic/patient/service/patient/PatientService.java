@@ -173,10 +173,6 @@ public class PatientService {
 		if (!patient.getFirstName().equalsIgnoreCase(dto.firstName())) {
 			patient.setFirstName(dto.firstName());
 		}
-		
-		if (!patient.getGender().equalsIgnoreCase(dto.gender())) {
-			patient.setGender(dto.gender());
-		}
 
 		return patientMapper.patientToPatientDto(patient);
 	}
@@ -218,10 +214,6 @@ public class PatientService {
 		
 		if (!patient.getFirstName().equalsIgnoreCase(dto.firstName())) {
 			patient.setFirstName(dto.firstName());
-		}
-		
-		if (!patient.getGender().equalsIgnoreCase(dto.gender())) {
-			patient.setGender(dto.gender());
 		}
 		
 		return patientMapper.patientToPatientDto(patient);
