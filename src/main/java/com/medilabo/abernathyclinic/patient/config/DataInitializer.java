@@ -12,13 +12,14 @@ import com.medilabo.abernathyclinic.patient.repository.StreetRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-@Profile("dev")
+@Profile({"dev", "docker"})
 @Configuration
 public class DataInitializer {
 
@@ -136,28 +137,32 @@ public class DataInitializer {
 		City city1 = cityRepository.findByNameAndZip("Cambridge", "10139").get();
 		Street street1 = streetRepository.findByNameAndCity("Brookside St", city1).get();
 		Address address1 = addressRepository.findByNumberAndStreet("1", street1).get();
-		Patient patient1 = new Patient("TestNone", "Test", LocalDate.of(1966, 12, 31), "F", address1, "100-222-3333");
+		String uuid1 = "6c1fe1a2-62cd-4c94-969d-68d07d8e8bdb";
+		Patient patient1 = new Patient(UUID.fromString(uuid1), "TestNone", "Test", LocalDate.of(1966, 12, 31), "F", address1, "100-222-3333");
 		
 		patients.add(patient1);
 	
 		City city2 = cityRepository.findByNameAndZip("North Platte", "20139").get();
 		Street street2 = streetRepository.findByNameAndCity("High St", city2).get();
 		Address address2 = addressRepository.findByNumberAndStreet("2", street2).get();
-		Patient patient2 = new Patient("TestBorderline", "Test", LocalDate.of(1945, 06, 24), "M", address2,"200-333-4444");
+		String uuid2 = "d6d4aa48-0fba-4845-9659-4b3a336d988c";
+		Patient patient2 = new Patient(UUID.fromString(uuid2), "TestBorderline", "Test", LocalDate.of(1945, 06, 24), "M", address2,"200-333-4444");
 		
 		patients.add(patient2);
 	
 		City city3 = cityRepository.findByNameAndZip("San Diego", "30139").get();
 		Street street3 = streetRepository.findByNameAndCity("Club Road", city3).get();
 		Address address3 = addressRepository.findByNumberAndStreet("3", street3).get();
-		Patient patient3 = new Patient("TestInDanger", "Test", LocalDate.of(2004, 06, 18), "M", address3, "300-444-5555");
+		String uuid3 = "f3136613-bb6e-4fcf-86d8-f560fbfb8dac";
+		Patient patient3 = new Patient(UUID.fromString(uuid3), "TestInDanger", "Test", LocalDate.of(2004, 06, 18), "M", address3, "300-444-5555");
 		
 		patients.add(patient3);
 	
 		City city4 = cityRepository.findByNameAndZip("Bethia", "40139").get();
 		Street street4 = streetRepository.findByNameAndCity("Valley Dr", city4).get();
 		Address address4 = addressRepository.findByNumberAndStreet("4", street4).get();
-		Patient patient4 = new Patient("TestEarlyOnset", "Test", LocalDate.of(2002, 06, 28), "F", address4, "400-555-6666");
+		String uuid4 = "44d93e2b-2db1-4617-9f49-f0de94567d03"; 
+		Patient patient4 = new Patient(UUID.fromString(uuid4), "TestEarlyOnset", "Test", LocalDate.of(2002, 06, 28), "F", address4, "400-555-6666");
 		
 		patients.add(patient4);
 	
@@ -166,6 +171,7 @@ public class DataInitializer {
 					.findByNameAndBirthDate(patient.getLastName(), patient.getFirstName(), patient.getBirthDate())
 					.isEmpty()) {
 				patientRepository.save(patient);
+				System.out.println(patient.getUuid());
 			}
 		});
 	}
