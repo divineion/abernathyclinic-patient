@@ -58,6 +58,17 @@ public class Patient {
 		this.phone = phone;
 	}
 	
+	public Patient(UUID uuid, String lastName, String firstName, LocalDate birthDate, String gender, Address address,
+			String phone) {
+		this.uuid = uuid;
+		this.lastName = lastName;
+		this.firstName = firstName;
+		this.birthDate = birthDate;
+		this.gender = gender;
+		this.address = address;
+		this.phone = phone;
+	}
+	
 	public Long getId() {
 		return this.id;
 	}
