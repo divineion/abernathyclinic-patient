@@ -1,0 +1,65 @@
+image: maven:3.9.10-eclipse-temurin-24
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository" # absolute path to local repository, will be used to installe xternal libs
+  SPRING_PROFILES_ACTIVE: test
+
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - test
+  - package
+  - image
+
+cache:            # jobs that use the same cache don’t have to download the files again
+  paths:
+    - .m2/repository
+  key: "$CI_COMMIT_REF_SLUG" # all commits from the same branch will share the cache
+
+# installe les dépendances et compile le code
+build-job:
+  stage: build
+  script:
+    - mvn clean compile \
+      -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository \
+      -Dspring.profiles.active=test \
+      -Dspring.datasource.username=$DATABASE_USERNAME \
+      -Dspring.datasource.password=$DATABASE_PASSWORD \
+      -Ddatabase.driver=$DATABASE_DRIVER \
+      --batch-mode --errors --fail-at-end --show-version
+
+test-job:
+  stage: test
+  script:
+    - mvn clean test
+
+# créer une archive du projet
+package-job: 
+  stage: package
+  script:
+    - ./mvnw clean package --batch-mode --fail-at-end
+  artifacts:
+    paths:
+      - target/*.jar
+    name: "microservice-patient-jar-artifacts"
+
+# créer l'image, executer et supprimer le container à la fin de son execution
+image-job: 
+  stage: image
+  image: docker:latest
+  # permettre de récupérer le JAR issu du package-job
+  dependencies:
+  - package-job
+  services:
+    - docker:dind
+  variables: # Configuration requise du GitLab Runner pour utiliser TLS
+  # préciser le certificat TLS
+    DOCKER_TLS_CERTDIR: "/certs"
+  script: 
+    - docker build -t microservice-patient:latest .
+    - docker run --rm \
+      -e SPRING_PROFILES_ACTIVE=test \
+      -e SPRING_DATASOURCE_URL=$DATABASE_URL \
+      -e DATABASE_DRIVER=$DATABASE_DRIVER \
+      -e SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME \
+      -e SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD \
+      microservice-patient:latest
