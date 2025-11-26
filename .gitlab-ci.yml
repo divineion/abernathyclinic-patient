@@ -20,10 +20,10 @@ build-job:
   stage: build
   script:
     - |
-      mvn -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository \ 
+      mvn -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository \
       -Dspring.profiles.active=test \
-      -Dspring.datasource.username=$DATABASE_USERNAME \ 
-      -Dspring.datasource.password=$DATABASE_PASSWORD \ 
+      -Dspring.datasource.username=$DATABASE_USERNAME \
+      -Dspring.datasource.password=$DATABASE_PASSWORD \
       -Ddatabase.driver=$DATABASE_DRIVER \
       clean compile \
       --batch-mode --errors --fail-at-end --show-version
