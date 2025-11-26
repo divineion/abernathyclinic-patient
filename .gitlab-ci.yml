@@ -9,6 +9,7 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - package
   - image
+  - integration-test
 
 cache:            # jobs that use the same cache don’t have to download the files again
   paths:
@@ -44,26 +45,41 @@ package-job:
       - target/*.jar
     name: "microservice-patient-jar-artifacts"
 
-# build de l'image Docker'
+# build de l'image Docker
+# le job tourne dans un conteneur avec Docker CLI
 image-job: 
   stage: image
   image: docker:latest
   # récupérer le JAR issu du package-job
   dependencies:
   - package-job
+  # fournit le daemon Docker qui exécute les conteneurs générés par les commandes des jobs
   services:
     - docker:dind
-  # tester si le Dockerfile est correct / l’image peut être créée
-  # tester si le conteneur peut démarrer (variables d'environnement etc)
-  # commande principale echo se termine immédiatement pour poursuivre le pipeline si pas d'erreur
+  # objectif : tester si le Dockerfile est correct / l’image peut être créée
   script: 
     - docker build -t microservice-patient:latest .
+
+# lancer les tests d'intégration dans un container Docker
+# tester si le conteneur peut démarrer (variables d'environnement etc)
+integration-job: 
+  services:
+  - docker:dind
+  stage: integration-test
+  image: docker:latest
+  dependencies:
+    - image-job
+  script: 
+# lancer le conteneur en mode détaché pour libérer le terminal et exécuter les tests avec Maven
     - |
-      docker run --rm \
+      docker run -d --name patient-container --rm \
       -e SPRING_PROFILES_ACTIVE=test \
       -e SPRING_DATASOURCE_URL=$DATABASE_URL \
       -e DATABASE_DRIVER=$DATABASE_DRIVER \
       -e SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME \
       -e SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD \
-      microservice-patient:latest \
-      /bin/bash -c 'echo "Container runs"'
+      microservice-patient:latest
+    - docker ps
+    - mvn clean verify
+    - docker stop patient-container
+  
