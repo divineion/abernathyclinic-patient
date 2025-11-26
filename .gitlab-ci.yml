@@ -19,13 +19,13 @@ cache:            # jobs that use the same cache don’t have to download the fi
 build-job:
   stage: build
   script:
-    - > 
-      mvn -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository 
-      -Dspring.profiles.active=test 
-      -Dspring.datasource.username=$DATABASE_USERNAME 
-      -Dspring.datasource.password=$DATABASE_PASSWORD 
-      -Ddatabase.driver=$DATABASE_DRIVER 
-      clean compile 
+    - | 
+      mvn -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository \ 
+      -Dspring.profiles.active=test \
+      -Dspring.datasource.username=$DATABASE_USERNAME \ 
+      -Dspring.datasource.password=$DATABASE_PASSWORD \ 
+      -Ddatabase.driver=$DATABASE_DRIVER \
+      clean compile \
       --batch-mode --errors --fail-at-end --show-version
 
 test-job:
@@ -54,7 +54,8 @@ image-job:
     - docker:dind
   script: 
     - docker build -t microservice-patient:latest .
-    - docker run --rm \
+    - |
+      docker run --rm \
       -e SPRING_PROFILES_ACTIVE=test \
       -e SPRING_DATASOURCE_URL=$DATABASE_URL \
       -e DATABASE_DRIVER=$DATABASE_DRIVER \
