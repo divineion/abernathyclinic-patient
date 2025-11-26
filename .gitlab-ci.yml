@@ -15,7 +15,7 @@ cache:            # jobs that use the same cache don’t have to download the fi
     - .m2/repository
   key: "$CI_COMMIT_REF_SLUG" # all commits from the same branch will share the cache
 
-# installe les dépendances et compile le code
+# build du projet
 build-job:
   stage: build
   script:
@@ -28,12 +28,13 @@ build-job:
       clean compile \
       --batch-mode --errors --fail-at-end --show-version
 
+# tests unitaires
 test-job:
   stage: test
   script:
     - mvn clean test
 
-# créer une archive du projet
+# création du JAR
 package-job: 
   stage: package
   script:
@@ -43,15 +44,18 @@ package-job:
       - target/*.jar
     name: "microservice-patient-jar-artifacts"
 
-# créer l'image, executer et supprimer le container à la fin de son execution
+# build de l'image Docker'
 image-job: 
   stage: image
   image: docker:latest
-  # permettre de récupérer le JAR issu du package-job
+  # récupérer le JAR issu du package-job
   dependencies:
   - package-job
   services:
     - docker:dind
+  # tester si le Dockerfile est correct / l’image peut être créée
+  # tester si le conteneur peut démarrer (variables d'environnement etc)
+  # commande principale echo se termine immédiatement pour poursuivre le pipeline si pas d'erreur
   script: 
     - docker build -t microservice-patient:latest .
     - |
@@ -61,4 +65,5 @@ image-job:
       -e DATABASE_DRIVER=$DATABASE_DRIVER \
       -e SPRING_DATASOURCE_USERNAME=$DATABASE_USERNAME \
       -e SPRING_DATASOURCE_PASSWORD=$DATABASE_PASSWORD \
-      microservice-patient:latest
+      microservice-patient:latest \
+      /bin/bash -c 'echo "Container runs"'
