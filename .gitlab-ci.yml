@@ -70,7 +70,6 @@ integration-job:
   services:
   - docker:dind
   stage: integration-test
-  image: docker:latest
   dependencies:
     - image-job
   before_script: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
