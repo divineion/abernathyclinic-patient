@@ -19,12 +19,12 @@ cache:            # jobs that use the same cache don’t have to download the fi
 build-job:
   stage: build
   script:
-    - mvn clean compile \
-      -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository \
+    - mvn -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository \
       -Dspring.profiles.active=test \
       -Dspring.datasource.username=$DATABASE_USERNAME \
       -Dspring.datasource.password=$DATABASE_PASSWORD \
       -Ddatabase.driver=$DATABASE_DRIVER \
+      clean compile \
       --batch-mode --errors --fail-at-end --show-version
 
 test-job:
@@ -51,9 +51,6 @@ image-job:
   - package-job
   services:
     - docker:dind
-  variables: # Configuration requise du GitLab Runner pour utiliser TLS
-  # préciser le certificat TLS
-    DOCKER_TLS_CERTDIR: "/certs"
   script: 
     - docker build -t microservice-patient:latest .
     - docker run --rm \
