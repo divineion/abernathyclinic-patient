@@ -67,6 +67,10 @@ image-job:
 # récupérer l'image en se connectant à dockerhub
 # tester si le conteneur peut démarrer (variables d'environnement etc)
 integration-job: 
+# pointer vers le daemon Docker dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
   services:
   - docker:dind
   stage: integration-test
