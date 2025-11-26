@@ -37,7 +37,7 @@ test-job:
 package-job: 
   stage: package
   script:
-    - ./mvnw clean package --batch-mode --fail-at-end
+    - mvn clean package --batch-mode --fail-at-end
   artifacts:
     paths:
       - target/*.jar
