@@ -32,9 +32,6 @@ import com.medilabo.abernathyclinic.patient.dto.UpdatePatientDto;
 public class PatientControllerIT {
 	private static final UUID UUID_PATIENT_ALMEIDA = UUID.fromString("ad1ca72c-a9a4-4e26-b634-55659f2b8423");
 	private static final UUID UUID_PATIENT_BACHO   = UUID.fromString("e64932dd-4d17-4070-aafb-8b2dd309c628");
-	private static final UUID UUID_PATIENT_CIMMS   = UUID.fromString("101b8bbc-b56e-4549-bc31-d1525340353c");
-	private static final UUID UUID_PATIENT_DESTARAC = UUID.fromString("aa1358cb-024b-4e59-a03c-5c463aee170b");
-
 	
 	@Autowired
 	MockMvc mockMvc;
