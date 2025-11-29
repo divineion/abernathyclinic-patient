@@ -82,7 +82,7 @@ integration-job:
     - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
     - docker pull divineion/microservice-patient:$CI_COMMIT_REF_SLUG
     - |
-      docker run -d --name patient-container --rm \
+      docker run -d --name patient-container \
       -e SPRING_PROFILES_ACTIVE=test \
       -e SPRING_DATASOURCE_URL=$DATABASE_URL \
       -e DATABASE_DRIVER=$DATABASE_DRIVER \
@@ -91,5 +91,9 @@ integration-job:
       divineion/microservice-patient:$CI_COMMIT_REF_SLUG
     - docker ps
     - mvn clean verify
+    - |
+      if [ "$(docker ps -q -f name=patient-container)" ]; then
+        docker stop patient-container
+      fi
     - docker stop patient-container
   
