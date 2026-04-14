@@ -3,6 +3,7 @@ package com.medilabo.abernathyclinic.patient.service.address;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.medilabo.abernathyclinic.patient.dto.AddressDto;
 import com.medilabo.abernathyclinic.patient.entity.Address;
@@ -26,6 +27,7 @@ public class AddressService {
 		this.cityRepository = cityRepository;
 	}
 
+	@Transactional(rollbackFor=Exception.class)
 	public Address addAddress(AddressDto patientAddress) {
 		City city = new City(patientAddress.city(), patientAddress.zip());
 		City managedCity = addCityIfNotExists(city);
