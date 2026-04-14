@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.medilabo.abernathyclinic.patient.constants.ApiMessages;
 import com.medilabo.abernathyclinic.patient.dto.AddressDto;
@@ -20,8 +21,6 @@ import com.medilabo.abernathyclinic.patient.exception.IncompleteAddressException
 import com.medilabo.abernathyclinic.patient.exception.PatientNotFoundException;
 import com.medilabo.abernathyclinic.patient.repository.PatientRepository;
 import com.medilabo.abernathyclinic.patient.service.address.AddressService;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class PatientService {
@@ -73,6 +72,10 @@ public class PatientService {
 	 * @return
 	 * @throws PatientNotFoundException
 	 */
+	@Transactional(readOnly = true)
+	// annotation même si les méthodes du repo sont default read only pour éviter 
+	// la LazyInitializationException si la transaction est déjà fermée
+	// quand le mapper veut accéder aux relations de l'objet Patient
 	public PatientDto findPatientById(Long id) throws PatientNotFoundException {
 		Patient patient = patientRepository.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + id));
@@ -86,6 +89,7 @@ public class PatientService {
 	 * @return
 	 * @throws PatientNotFoundException
 	 */
+	@Transactional(readOnly = true)
 	public PatientDto findPatientByUuid(UUID uuid) throws PatientNotFoundException {
 		Patient patient = patientRepository.findByUuid(uuid)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + uuid));
@@ -97,6 +101,7 @@ public class PatientService {
 	 * Retrieves a list of all patients, returned as MinimalPatientDto (for list views).
 	 * @return
 	 */
+	@Transactional(readOnly=true)
 	public List<MinimalPatientDto> findAllPatient() {
 		Sort sort = Sort.by(Direction.ASC, "lastName");
 
@@ -113,7 +118,7 @@ public class PatientService {
 	 * @return
 	 * @throws IncompleteAddressException
 	 */
-	@Transactional(rollbackOn = Exception.class)
+	@Transactional(rollbackFor=Exception.class)
 	public PatientDto createPatient(CreatePatientDto dto) throws IncompleteAddressException {
 		Patient newPatient = patientMapper.createPatientDtoToPatient(dto);
 		
@@ -143,7 +148,7 @@ public class PatientService {
 	 * @throws PatientNotFoundException
 	 * @throws IncompleteAddressException
 	 */
-	@Transactional(rollbackOn = Exception.class)
+	@Transactional(rollbackFor = Exception.class)
 	public PatientDto updatePatient(Long id, UpdatePatientDto dto) throws PatientNotFoundException, IncompleteAddressException {
 		Patient patient = patientRepository.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + id));
@@ -185,7 +190,7 @@ public class PatientService {
 	 * @throws PatientNotFoundException
 	 * @throws IncompleteAddressException
 	 */
-	@Transactional(rollbackOn = Exception.class)
+	@Transactional(rollbackFor = Exception.class)
 	public PatientDto updatePatientByUuid(UUID uuid, UpdatePatientDto dto) throws PatientNotFoundException, IncompleteAddressException {
 		Patient patient = patientRepository.findByUuid(uuid)
 				.orElseThrow(() -> new PatientNotFoundException(ApiMessages.PATIENT_NOT_FOUND + uuid));
