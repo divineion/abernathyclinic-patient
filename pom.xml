@@ -29,6 +29,9 @@
 	<properties>
 		<java.version>24</java.version>
 	    <org.mapstruct.version>1.6.3</org.mapstruct.version>
+	    <!-- surcharge globale du BOM jackson pr aligner tous les modules, à retirer lors du passage
+	    à une version de Spring Boot qui intègre nativement Jackson en 2.21.5 -->
+	    <jackson-bom.version>2.21.5</jackson-bom.version>
 	</properties>
 	<dependencies>
 		<dependency>
