@@ -1,5 +1,18 @@
 # Microservice Patient
 
+## Architecture
+
+Ce microservice fait partie d'une application de gestion de données médicales et démographiques permettant d'obtenir des rapport de risques en fonction des profils des patients et de constatations médicales. 
+
+Il s'intègre à l'application avec d'autres microservices :
+ - [API Gateway](https://github.com/divineion/abernathyclinic-gateway) pour l'authentification et le routage.    
+ - [Microservice Notes](https://github.com/divineion/abernathyclinic-notes) pour la gestion des données médicales.  
+ - [Microservice Report](https://github.com/divineion/abernathyclinic-report) pour l'évaluation du niveau de risque de diabète en croisant les données démographiques et les notes médicales.   
+ - [Infrastructure](https://github.com/divineion/abernathyclinic-infra) pour l'orchestration Docker.   
+ - [Interface utilisateur](https://github.com/divineion/abernathyclinic-client) pour l'interface web de gestion des fiches patients et la consultation des rapports de risque.   
+ 
+ ![Schéma d'architecture](docs/app-architecture.png)
+
 ## 1. Rôle
 Ce microservice gère les données démographiques des patients (création, modification, consultation).   
 Il garantit la conformité de la base de données relationnelle aux normes ISO (3NF). 
@@ -21,7 +34,7 @@ Dupliquez le fichier `.env.example` vers un fichier `.env` et renseignez vos ide
 `DATABASE_PASSWORD` | mot de passe BDD | à renseigner dans le `.env`       
 `DATABASE_DRIVER` | Driver JDBC | `org.postgresql.Driver`   
 
-## Principaux endpoints
+## 4. Principaux endpoints
 
 Les interactions entre les microservices utilisent des UUID.   
 Toutefois, des endpoints basés sur l'ID séquentiel (/id/{id}) ont été ajoutés dans la perspective d'une transition vers des identifiants plus compacts.   
@@ -35,7 +48,7 @@ GET `/api/patient/{uuid}/report-info` : expose les données nécessaires au serv
 POST `/api/patient` : crée un nouveau patient.   
 
 PATCH `/api/patient/{id}` : met à jour partiellement un patient via son ID.   
-PATCH `/api/patient/{uuid}` : met à jour partiellement un patient via son UUID.   
+PATCH `/api/patient/{uuid}/update` : met à jour partiellement un patient via son UUID.   
 
 ## 5. Démarrage rapide
 ### Prérequis
@@ -50,6 +63,7 @@ CREATE DATABASE abernathyclinic_patient;
 ```
 
 ### Configuration des variables d'environnement
+Créez une copie du `.env.example` dans un fichier `.env`.
 ```
 cp .env.example .env
 ```
@@ -58,7 +72,7 @@ Complétez le `.env` créé avec vos identifiants de base de données.
 
 ### Lancer le microservice
 ```
--Dspring-boot.run.profiles=dev
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 
