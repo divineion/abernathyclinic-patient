@@ -12,7 +12,7 @@
 	<artifactId>abernathyclinic-patient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>abernathyclinic-patient</name>
-	<description>Backend service </description>
+	<description>Microservice for managing patient demographic data using PostgreSQL and Flyway.</description>
 	<url/>
 	<licenses>
 		<license/>
