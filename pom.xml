@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.8</version>
+		<version>3.5.16</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.medilabo</groupId>
 	<artifactId>abernathyclinic-patient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>abernathyclinic-patient</name>
-	<description>Backend service </description>
+	<description>Microservice for managing patient demographic data using PostgreSQL and Flyway.</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -29,6 +29,9 @@
 	<properties>
 		<java.version>24</java.version>
 	    <org.mapstruct.version>1.6.3</org.mapstruct.version>
+	    <!-- surcharge globale du BOM jackson pr aligner tous les modules, à retirer lors du passage
+	    à une version de Spring Boot qui intègre nativement Jackson en 2.21.5 -->
+	    <jackson-bom.version>2.21.5</jackson-bom.version>
 	</properties>
 	<dependencies>
 		<dependency>
